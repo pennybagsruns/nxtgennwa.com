@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap">
 <style>
   /* ============================================================
-     nxt gen — four tabs on one page: Home, Calendar, About, More Info.
+     nxt gen — one scrolling page: Home (full screen), Calendar, Info.
      Single dark look: graphite ground, white type, the hero photo.
      ============================================================ */
   :root {
@@ -50,6 +50,7 @@
 
   *, *::before, *::after { box-sizing: border-box; }
   html {
+    scroll-behavior: smooth;
     background: var(--ground);
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -73,94 +74,6 @@
     overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
   }
 
-  /* ---------- tab bar ---------- */
-  .bar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    height: calc(var(--bar) + var(--safe-top));
-    padding: var(--safe-top) max(var(--gutter), env(safe-area-inset-right, 0px)) 0 max(var(--gutter), env(safe-area-inset-left, 0px));
-    background: rgba(29, 31, 35, 0.88);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-    backdrop-filter: blur(14px) saturate(140%);
-    border-bottom: 1px solid var(--line);
-    transition: background-color 0.25s ease, border-color 0.25s ease;
-  }
-  body[data-view="home"] .bar {
-    background: transparent;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    border-bottom-color: transparent;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    color: var(--cloud);
-    text-decoration: none;
-    border-radius: 3px;
-    transition: opacity 0.25s ease;
-  }
-  .brand svg { display: block; width: 116px; height: auto; }
-  body[data-view="home"] .brand { opacity: 0; pointer-events: none; }
-  .brand:focus-visible { outline: 2px solid var(--cloud); outline-offset: 6px; }
-
-  .tabs {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .tabs a {
-    position: relative;
-    display: block;
-    padding: 10px 14px;
-    font-family: var(--display);
-    font-stretch: var(--wide);
-    font-variation-settings: "wdth" 112;
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    color: var(--haze);
-    border-radius: 3px;
-    -webkit-tap-highlight-color: transparent;
-    transition: color 0.18s ease, background-color 0.18s ease;
-  }
-  .tabs a::after {
-    content: "";
-    position: absolute;
-    left: 14px; right: 14px; bottom: 3px;
-    height: 2px;
-    background: var(--cloud);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.22s ease;
-  }
-  .tabs a:hover { color: var(--cloud); background: rgba(255, 255, 255, 0.06); }
-  .tabs a[aria-current="page"] { color: var(--cloud); }
-  .tabs a[aria-current="page"]::after { transform: scaleX(1); }
-  .tabs a:focus-visible { outline: 2px solid var(--cloud); outline-offset: 2px; }
-
-  /* phones: the four tabs share the full width; the small logo steps aside */
-  @media (max-width: 640px) {
-    :root { --bar: 56px; }
-    .brand { display: none; }
-    .bar nav { flex: 1 1 auto; }
-    .bar { padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px)); }
-    .tabs { width: 100%; justify-content: space-between; gap: 0; }
-    .tabs li { flex: 1 1 auto; }
-    .tabs a { text-align: center; padding: 10px 4px; font-size: 12px; letter-spacing: 0.07em; }
-    .tabs a::after { left: 22%; right: 22%; }
-  }
-
   /* ============================================================
      HOME — the photo, edge to edge (unchanged from the first site)
      ============================================================ */
@@ -176,8 +89,8 @@
     gap: 56px;
     padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
     padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
-    --pad-top: clamp(28px, 7vh, 88px);
-    padding-top: calc(var(--pad-top) + var(--bar) + var(--safe-top));
+    --pad-top: clamp(40px, 9vh, 104px);
+    padding-top: calc(var(--pad-top) + var(--safe-top));
     padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   }
   .hero .bg {
@@ -200,14 +113,13 @@
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(to top, var(--scrim-foot) 0, var(--scrim-none) 16%),
+      linear-gradient(to top, var(--ground) 0, rgba(29, 31, 35, 0.8) calc(var(--overlap) * 0.6), rgba(29, 31, 35, 0) calc(var(--overlap) * 1.7)),
       linear-gradient(to bottom, var(--scrim-strong) 0, var(--scrim-mid) 34%, var(--scrim-none) 66%);
   }
   @media (min-aspect-ratio: 1/1) {
     .hero::before {
       background:
-        linear-gradient(to bottom, rgba(29, 31, 35, 0.55) 0, var(--scrim-none) calc(var(--bar) + 40px)),
-        linear-gradient(to top, var(--scrim-foot) 0, var(--scrim-none) 14%),
+        linear-gradient(to top, var(--ground) 0, rgba(29, 31, 35, 0.8) calc(var(--overlap) * 0.6), rgba(29, 31, 35, 0) calc(var(--overlap) * 1.7)),
         radial-gradient(ellipse 78% 92% at 0% 0%,
           var(--scrim-strong) 0, var(--scrim-mid) 40%, var(--scrim-soft) 72%, var(--scrim-none) 100%);
     }
@@ -297,7 +209,7 @@
     border-color: rgba(255, 255, 255, 0.55);
   }
   .btn-ghost:hover { background: rgba(29, 31, 35, 0.6); border-color: var(--cloud); }
-  .btn-ghost:hover svg { transform: translateX(3px); }
+  .btn-ghost:hover svg { transform: translateY(2px); }
 
   .fine {
     margin: 0;
@@ -308,9 +220,6 @@
     color: var(--cloud);
   }
 
-  @media (max-aspect-ratio: 1/1) {
-    .hero { --pad-top: clamp(20px, 4vh, 48px); }
-  }
   @media (max-height: 640px) and (max-aspect-ratio: 1/1) {
     .hero { --pad-top: 20px; gap: 24px; }
     .lead-inner { gap: 12px; }
@@ -672,7 +581,7 @@
      ============================================================ */
   .info-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 560px);
     gap: clamp(20px, 4vw, 48px);
     align-items: start;
   }
@@ -735,40 +644,78 @@
   .facts dd a { text-decoration: none; }
   .facts dd a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-  /* gentle fade when switching tabs */
-  .view { animation: fade 0.32s ease both; }
-  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  /* ============================================================
+     ONE-PAGE SCROLL: Home fills the screen, then Calendar, then Info
+     ============================================================ */
+  .section-head {
+    padding: clamp(56px, 10vh, 104px) max(var(--gutter), env(safe-area-inset-right, 0px)) clamp(24px, 4vh, 36px) max(var(--gutter), env(safe-area-inset-left, 0px));
+  }
+  .section .body { padding-top: 0; }
+  /* the Halloween photo slides under the bottom of the calendar
+     and the Info section slides up over the bottom of the photo */
+  :root { --overlap: clamp(110px, 16vh, 170px); }
+  #calendar { position: relative; z-index: 1; margin-top: calc(-1 * var(--overlap)); }
+  #calendar .section-head { padding-top: clamp(20px, 3vh, 32px); }
+  #calendar .title, #calendar .eyebrow { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6); }
+  #calendar .body { padding-bottom: 0; }
+  #calendar .card { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); }
+  .photo-band {
+    position: relative;
+    z-index: 0;
+    height: clamp(340px, 62vh, 620px);
+    margin-top: calc(-1 * var(--overlap));
+    margin-bottom: calc(-1 * var(--overlap));
+    overflow: hidden;
+    background: var(--ground);
+  }
+  .section-info { position: relative; z-index: 1; }
+  .section-info .section-head { padding-top: clamp(20px, 3vh, 32px); }
+  .section-info .title, .section-info .eyebrow { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6); }
+  .photo-band img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 54% 40%;
+  }
+  /* fade the photo into the dark page above and below */
+  .photo-band::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, var(--ground) 0, rgba(29, 31, 35, 0.55) calc(var(--overlap) * 0.55), rgba(29, 31, 35, 0) calc(var(--overlap) * 1.15)),
+      linear-gradient(to top, var(--ground) 0, rgba(29, 31, 35, 0.8) calc(var(--overlap) * 0.6), rgba(29, 31, 35, 0) calc(var(--overlap) * 1.6));
+    pointer-events: none;
+  }
+  @media (max-width: 640px) {
+    .photo-band { height: clamp(440px, 74vh, 660px); }
+  }
+  /* wider screens: still edge to edge, just taller so more of the car shows */
+  @media (min-width: 641px) {
+    .photo-band { height: clamp(460px, 92vh, 900px); }
+    .photo-band img { object-position: 54% 46%; }
+  }
+
 
   @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
-<body data-view="home">
+<body>
 
-<!-- The NXT GEN logo, drawn once and reused in the tab bar and on the home screen -->
+<!-- The NXT GEN logo -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="nxtgen-logo" viewBox="0 0 4399 846"><path fill="currentColor" fill-rule="evenodd" d="M2082 107l-5 -10l-25 -22l0 -18l-6 -12l-14 -13l-16 -8l-12 0l-11 5l-14 2l-139 -1l-17 2l-16 -6l-21 3l-130 2l-30 5l-20 -1l-40 4l-35 6l-22 1l-62 9l-18 5l-42 2l-37 7l-44 4l-33 7l-14 5l-19 3l-9 4l-7 8l-6 21l-5 7l-76 51l-65 49l-119 93l-52 49l-22 14l-8 -2l-6 -6l-51 -72l-14 -14l-13 -9l-26 -9l-34 0l-26 7l-7 0l-3 -3l0 -7l15 -16l11 -20l31 -44l2 -11l-9 -18l-16 -17l-50 -30l-11 -3l-8 1l-6 5l-37 75l-43 73l-19 46l-22 32l-49 114l-21 56l-4 16l-2 26l-8 15l-7 20l-2 40l-2 7l-5 5l-4 0l-7 -5l-45 -63l-6 -20l-23 -53l-11 -32l-26 -109l-14 -42l-3 -18l1 -10l22 -82l0 -15l-3 -9l-12 -16l-24 -22l-14 -10l-15 -8l-15 -5l-13 0l-8 6l-7 11l0 7l6 10l1 8l-15 55l-11 11l-3 6l2 25l-4 14l-51 137l-60 142l-24 71l-17 63l-2 16l1 29l16 31l26 28l12 8l14 5l12 0l5 -4l3 -11l1 -47l5 -23l10 -21l2 -15l20 -48l14 -50l11 -26l14 -26l8 -28l8 -17l12 -15l13 -34l4 -5l4 -1l9 13l25 61l31 55l31 41l39 46l59 60l6 9l8 21l13 24l13 13l25 15l18 1l4 -2l4 -6l-1 -39l-2 -10l1 -34l12 -68l17 -58l42 -109l28 -55l18 -47l22 -32l15 -29l6 -5l5 0l24 23l32 39l58 80l2 11l-12 16l-40 39l-63 69l-60 69l-43 46l-15 20l-12 24l-2 23l6 17l18 20l28 18l10 0l37 -41l33 -47l28 -32l48 -62l84 -90l11 -9l7 -2l7 5l7 12l29 29l68 78l38 32l44 30l48 26l45 15l13 2l28 0l32 -10l9 0l6 5l9 13l16 11l14 26l9 9l15 6l28 3l6 -7l-3 -36l2 -57l5 -24l9 -28l45 -102l19 -56l24 -56l24 -49l18 -26l13 -25l62 -136l29 -74l8 -12l7 -3l70 -12l40 -4l23 0l21 3l40 0l17 -2l129 1l70 7l20 0l10 2l16 7l11 0l7 -3l6 -6l3 -7zM112 601l4 4l0 6l-16 32l-6 17l-3 1l0 -20l7 -21l7 -14zM824 471l7 10l-1 7l-77 71l-64 69l-8 6l-6 2l-4 -1l-2 -3l1 -5l9 -13l61 -70l65 -67l11 -7zM1474 144l5 6l-1 6l-97 194l-28 51l-20 51l-22 39l-19 40l-14 37l-20 63l-14 57l-5 37l-3 6l-6 3l-8 -1l-30 -11l-28 -14l-53 -32l-35 -28l-29 -31l-33 -42l-8 -3l-7 -7l-9 -17l-32 -33l-29 -43l0 -8l2 -4l20 -20l106 -88l37 -26l123 -94l71 -47l32 -18l15 -6l34 -3l24 -7l45 -7zM1229 145l4 9l0 5l-12 13l-56 37l-17 15l-29 17l-20 19l-33 21l-33 28l-15 17l-21 11l-14 14l-77 65l-8 2l-10 -8l-3 -6l1 -9l24 -24l154 -124l134 -97l20 -10l6 1zM1552 70l-1 10l-4 5l-6 3l-33 -3l-25 4l-9 -2l-3 -3l7 -6l59 -13l10 0zM1603 63l5 -6l9 -2l55 -3l56 -6l47 5l38 -3l10 1l11 4l12 0l9 -3l75 2l28 -4l47 11l7 6l0 6l-6 5l-20 -1l-18 3l-12 -1l-11 -4l-12 0l-8 3l-27 -3l-14 5l-13 0l-8 -3l-32 2l-19 -6l-10 -1l-31 4l-23 -1l-17 4l-35 -2l-17 4l-21 0l-14 4l-9 0l-24 -7l-7 -7zM4360 97l-19 -15l-39 -23l-9 -3l-10 0l-8 7l-37 75l-36 60l-28 63l-18 25l-66 155l-7 24l-4 35l-13 28l-2 8l0 27l-3 16l-5 8l-5 0l-10 -9l-41 -58l-11 -32l-20 -45l-10 -30l-26 -110l-13 -38l-3 -14l0 -14l4 -21l18 -61l1 -12l-3 -12l-6 -11l-17 -17l-29 -23l-16 -8l-16 -5l-7 0l-9 5l-7 9l-2 6l7 19l-1 8l-9 29l-3 17l-15 20l1 26l-4 15l-50 134l-20 44l-16 43l-26 60l-31 96l-10 42l-2 28l5 19l18 29l25 25l11 6l19 4l9 -5l3 -11l2 -52l4 -18l10 -20l4 -20l7 -13l15 -41l11 -42l23 -47l8 -27l11 -24l10 -11l14 -35l4 -4l4 0l8 12l22 54l33 60l57 73l74 77l24 50l14 15l26 16l17 1l5 -2l4 -5l-3 -78l14 -79l17 -56l39 -102l31 -62l19 -49l22 -31l20 -40l6 -19l13 -12l17 -29l29 -41l1 -13zM3738 549l3 3l-1 9l-20 36l-2 -6l6 -23l7 -15zM2161 504l2 58l5 18l5 33l7 21l32 50l15 15l49 34l21 8l26 3l22 5l11 1l15 -3l20 0l23 5l15 -3l9 -6l39 -18l17 -13l25 -15l54 -23l36 -33l63 -34l11 -20l17 -8l11 0l3 3l0 9l-5 10l-8 8l-21 10l-23 15l-7 7l7 0l18 -7l7 1l4 5l-14 42l-9 38l-6 37l-1 19l6 20l12 14l20 11l10 1l5 -4l5 -12l15 -61l6 -17l18 -34l26 -41l10 -21l16 -21l11 -20l45 -39l8 -10l2 -16l-3 -13l-6 -12l-14 -13l0 -7l10 -5l50 -10l22 -7l35 -4l33 1l25 7l18 -2l9 16l15 19l0 10l-14 39l-4 30l1 45l9 40l8 21l0 9l-5 6l-6 3l-27 6l-15 7l-7 16l0 15l5 13l17 26l17 10l19 1l10 -3l17 -9l14 -2l24 -8l47 -21l37 -11l49 -20l39 -12l52 -21l26 -8l54 -12l74 -21l62 -11l39 1l6 -2l7 -7l2 -9l-8 -10l-21 -13l0 -5l3 -5l-3 -6l-6 -5l-33 -16l-11 -1l-13 3l-15 -1l-57 9l-19 9l-21 0l-50 13l-16 7l-30 7l-20 9l-20 3l-54 19l-19 4l-88 35l-6 0l-6 -6l5 -51l8 -33l33 -71l20 -32l11 -10l58 -18l64 -12l32 -4l21 -9l34 -5l79 -20l20 -3l31 0l13 -4l30 -3l23 1l15 -4l16 2l4 -3l2 -4l0 -12l-2 -13l-3 -5l-32 -15l-5 -6l-2 -15l-5 -5l-20 -9l-11 0l-54 11l-41 4l-86 18l-104 15l-4 -5l3 -9l76 -114l14 -18l10 -22l7 -7l25 -9l68 -14l40 -3l23 -4l49 -3l82 -13l57 -4l15 4l48 -1l7 -3l4 -6l0 -14l-7 -12l-19 -11l-12 -10l-10 -19l-19 -12l-65 -1l-44 7l-31 2l-53 11l-71 11l-51 11l-42 5l-41 8l-32 9l-24 11l-89 31l-26 11l-10 9l-5 13l0 12l3 12l8 14l19 18l6 3l9 1l19 -7l8 0l3 3l0 5l-9 18l-47 74l-21 37l-14 12l-47 17l-25 13l-8 9l-8 1l-24 -11l-8 -7l-5 -22l-6 -7l-8 -5l-15 -2l-21 4l-28 0l-116 22l-178 47l-124 29l-12 5l-9 8l-3 8l1 12l8 26l5 8l16 17l15 6l10 0l23 -12l33 0l17 -2l49 -16l44 -9l26 -8l4 0l1 2l-2 3l-31 20l-62 33l-130 64l-40 17l-46 15l-70 15l-19 2l-20 -1l-11 -2l-18 -7l-10 -7l-13 -16l-6 -13l-4 -20l0 -74l4 -19l11 -27l1 -18l11 -21l5 -28l28 -54l20 -24l21 -31l36 -42l20 -19l48 -39l40 -29l41 -25l31 -16l62 -25l32 -9l47 -8l41 0l14 2l23 7l9 5l5 6l0 7l-25 39l-11 23l-8 23l-3 18l0 33l3 10l2 2l7 0l10 -7l21 -5l14 -16l20 -33l22 -25l27 -26l28 -18l7 -7l6 -12l3 -13l0 -12l-4 -12l-6 -7l-17 -8l-9 0l-10 3l-8 -1l-33 -28l-21 -11l-22 -8l-32 -7l-22 -2l-42 4l-39 0l-45 5l-78 26l-65 32l-93 62l-9 9l-5 9l-18 18l-18 12l-18 17l-30 36l-62 90l-34 78l-14 52zM3531 599l0 3l-5 6l-20 10l-11 3l-24 2l-28 11l-16 2l-39 14l-25 4l-35 11l-24 -4l-12 8l-30 9l-26 3l-5 -2l0 -2l8 -6l37 -16l141 -41l61 -12l36 -10l12 2zM2793 420l-3 5l-27 12l-23 14l-11 1l-11 4l-7 0l-3 -3l0 -3l4 -5l23 -13l24 -5l22 -9l8 -1zM2972 410l-5 8l-11 3l-66 9l-117 25l-21 1l-3 -2l3 -4l14 -1l11 -6l14 -3l37 -14l10 -6l2 -15l25 -8l60 -6l30 -1l5 2l8 8zM3540 343l-1 4l-8 6l-83 16l-98 11l-65 12l-31 2l-12 -1l-3 -2l2 -5l16 -6l239 -47l27 0l12 4zM3686 71l-1 8l-8 8l-6 2l-27 -1l-16 2l-105 23l-42 6l-63 5l-35 10l-14 0l-6 -3l-4 -6l2 -5l7 -5l33 -9l23 -3l17 -5l38 -4l66 -15l70 -11l63 -2z"/></symbol>
 </svg>
 
-<header class="bar">
-  <a class="brand" href="#home" aria-label="nxt gen home">
-    <svg viewBox="0 0 4399 846" aria-hidden="true"><use href="#nxtgen-logo"/></svg>
-  </a>
-  <nav aria-label="Main">
-    <ul class="tabs">
-      <li><a href="#home" data-tab="home" aria-current="page">Home</a></li>
-      <li><a href="#calendar" data-tab="calendar">Calendar</a></li>
-      <li><a href="#about" data-tab="about">About</a></li>
-      <li><a href="#info" data-tab="info">More Info</a></li>
-    </ul>
-  </nav>
-</header>
 
 <main>
 
   <!-- ==================== HOME ==================== -->
-  <section class="view hero" id="view-home" aria-label="Home">
+  <section class="hero" id="home" aria-label="Home">
     <img class="bg" src="nxtgen-hero.jpg" alt="A row of performance cars parked under a blue Arkansas sky, seen from behind at ground level." width="1932" height="2576" decoding="async" fetchpriority="high">
 
     <div class="lead">
@@ -783,22 +730,20 @@
           </a>
           <a class="btn btn-ghost" href="#calendar">
             See events
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4"/></svg>
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M7 1v11M3 8l4 4 4-4"/></svg>
           </a>
         </div>
       </div>
     </div>
 
-    <p class="fine">&copy; 2026 nxt gen</p>
   </section>
 
   <!-- ==================== CALENDAR ==================== -->
-  <section class="view view-page" id="view-calendar" aria-labelledby="calendar-title" hidden>
-    <div class="page-head">
-      <div class="page-head-inner">
+  <section class="section" id="calendar" aria-labelledby="calendar-title">
+    <div class="section-head">
+      <div class="wrap">
         <p class="eyebrow">Events</p>
         <h2 class="title" id="calendar-title">Calendar</h2>
-        <p class="lede">Meets, drives and everything nxt gen has coming up around Northwest Arkansas.</p>
       </div>
     </div>
 
@@ -843,90 +788,24 @@
       </div>
     </div>
 
-    <footer class="foot"><span>&copy; 2026 nxt gen &middot; Northwest Arkansas</span><span class="foot-links"><a href="mailto:jacobtyburski@gmail.com?subject=Hello%20nxt%20gen">Email us</a><a href="https://www.instagram.com/nxt_gen_nwa/" target="_blank" rel="noopener">Instagram</a></span></footer>
   </section>
 
-  <!-- ==================== ABOUT ==================== -->
-  <section class="view view-page" id="view-about" aria-labelledby="about-title" hidden>
-    <div class="page-head">
-      <div class="page-head-inner">
-        <p class="eyebrow">Who we are</p>
-        <h2 class="title" id="about-title">About us</h2>
-        <p class="lede">A car brand and community for the next generation of motorsport enthusiasts in Northwest Arkansas.</p>
-      </div>
-    </div>
+  <!-- ==================== HALLOWEEN PHOTO (between Calendar and Info) ==================== -->
+  <div class="photo-band">
+    <img src="nxtgen-halloween.jpg" alt="A ghost mask lit up in the back window of a BMW M2." width="1717" height="2576" loading="lazy" decoding="async">
+  </div>
 
-    <div class="body">
+  <!-- ==================== INFO ==================== -->
+  <section class="section section-info" id="info" aria-labelledby="info-title">
+    <div class="section-head">
       <div class="wrap">
-        <div class="about-intro">
-          <p class="statement">Built by and for the next generation of car people in Northwest Arkansas.</p>
-          <div class="prose">
-            <p>nxt gen started with a simple idea: the people around here who live and breathe cars deserve a crew of their own. Whether it's your first project or your fifth build, you belong here.</p>
-            <p>We're building more than a meet. nxt gen is a local brand and community that brings enthusiasts together, and this is only the start.</p>
-          </div>
-        </div>
-
-        <div class="pillars">
-          <div class="card pillar">
-            <span class="num">01</span>
-            <h3>Community first</h3>
-            <p>Every build, every budget and every background is welcome.</p>
-          </div>
-          <div class="card pillar">
-            <span class="num">02</span>
-            <h3>Rooted in NWA</h3>
-            <p>Local roads, local people and local pride, from Fayetteville to Bentonville.</p>
-          </div>
-          <div class="card pillar">
-            <span class="num">03</span>
-            <h3>The next generation</h3>
-            <p>Made for the new wave of enthusiasts shaping where car culture goes next.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <footer class="foot"><span>&copy; 2026 nxt gen &middot; Northwest Arkansas</span><span class="foot-links"><a href="mailto:jacobtyburski@gmail.com?subject=Hello%20nxt%20gen">Email us</a><a href="https://www.instagram.com/nxt_gen_nwa/" target="_blank" rel="noopener">Instagram</a></span></footer>
-  </section>
-
-  <!-- ==================== MORE INFO ==================== -->
-  <section class="view view-page" id="view-info" aria-labelledby="info-title" hidden>
-    <div class="page-head">
-      <div class="page-head-inner">
         <p class="eyebrow">Good to know</p>
-        <h2 class="title" id="info-title">More info</h2>
-        <p class="lede">Answers to the questions we get most, and how to reach us.</p>
+        <h2 class="title" id="info-title">Info</h2>
       </div>
     </div>
 
     <div class="body">
       <div class="wrap info-layout">
-        <div>
-          <h3 class="h3">Questions</h3>
-          <div class="faq">
-            <details open>
-              <summary>What is nxt gen?<span class="plus" aria-hidden="true"></span></summary>
-              <div class="answer"><p>A car brand and community for the next generation of motorsport enthusiasts in Northwest Arkansas.</p></div>
-            </details>
-            <details>
-              <summary>Who can get involved?<span class="plus" aria-hidden="true"></span></summary>
-              <div class="answer"><p>Anyone who loves cars. You don't need a certain make, model or build to be part of it.</p></div>
-            </details>
-            <details>
-              <summary>How do I find out about events?<span class="plus" aria-hidden="true"></span></summary>
-              <div class="answer"><p>Every event goes on the <a href="#calendar">Calendar</a> tab here and on our Instagram, <a href="https://www.instagram.com/nxt_gen_nwa/" target="_blank" rel="noopener">@nxt_gen_nwa</a>.</p></div>
-            </details>
-            <details>
-              <summary>Where are you based?<span class="plus" aria-hidden="true"></span></summary>
-              <div class="answer"><p>Northwest Arkansas.</p></div>
-            </details>
-            <details>
-              <summary>How do I get in touch?<span class="plus" aria-hidden="true"></span></summary>
-              <div class="answer"><p>Email us at <a href="mailto:jacobtyburski@gmail.com?subject=Hello%20nxt%20gen">jacobtyburski@gmail.com</a> or send a DM on Instagram, <a href="https://www.instagram.com/nxt_gen_nwa/" target="_blank" rel="noopener">@nxt_gen_nwa</a>.</p></div>
-            </details>
-          </div>
-        </div>
-
         <aside class="card contact" aria-labelledby="contact-title">
           <h3 id="contact-title">Get in touch</h3>
           <p>Have a question, a car to show off, or want to help build nxt gen? Email us or message us on Instagram.</p>
@@ -950,10 +829,11 @@
       </div>
     </div>
 
-    <footer class="foot"><span>&copy; 2026 nxt gen &middot; Northwest Arkansas</span><span class="foot-links"><a href="mailto:jacobtyburski@gmail.com?subject=Hello%20nxt%20gen">Email us</a><a href="https://www.instagram.com/nxt_gen_nwa/" target="_blank" rel="noopener">Instagram</a></span></footer>
   </section>
 
 </main>
+
+<footer class="foot"><span>&copy; 2026 nxt gen &middot; Northwest Arkansas</span></footer>
 
 <script>
 /* ==================================================================
@@ -979,35 +859,6 @@ const WEEKLY = [
 
 (function () {
   "use strict";
-
-  /* ---------------- tabs ---------------- */
-  const TABS = {
-    home:     { el: "view-home",     title: "nxt gen | Northwest Arkansas" },
-    calendar: { el: "view-calendar", title: "Calendar | nxt gen" },
-    about:    { el: "view-about",    title: "About us | nxt gen" },
-    info:     { el: "view-info",     title: "More info | nxt gen" }
-  };
-
-  function currentTab() {
-    const key = (location.hash || "").replace("#", "").toLowerCase();
-    return TABS[key] ? key : "home";
-  }
-
-  function showTab(key, scroll) {
-    Object.keys(TABS).forEach(function (k) {
-      document.getElementById(TABS[k].el).hidden = (k !== key);
-    });
-    document.querySelectorAll(".tabs a").forEach(function (a) {
-      if (a.dataset.tab === key) a.setAttribute("aria-current", "page");
-      else a.removeAttribute("aria-current");
-    });
-    document.body.dataset.view = key;
-    document.title = TABS[key].title;
-    if (scroll) window.scrollTo(0, 0);
-  }
-
-  window.addEventListener("hashchange", function () { showTab(currentTab(), true); });
-  showTab(currentTab(), false);
 
   /* ---------------- calendar ---------------- */
   const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
