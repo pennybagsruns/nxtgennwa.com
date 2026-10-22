@@ -338,7 +338,7 @@
      ============================================================ */
   .cal-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 720px);
     gap: clamp(20px, 3vw, 32px);
     align-items: start;
   }
@@ -461,8 +461,29 @@
     color: var(--ink);
     border-radius: 6px;
     box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
-    pointer-events: none;
   }
+  .tip-place {
+    display: flex;
+    flex-direction: column;
+    margin-top: 6px;
+    padding: 7px 9px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    color: var(--ink);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tip-place:hover { border-color: rgba(0, 0, 0, 0.35); }
+  .tip-place:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .tip-place-name {
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .tip-place-name::after { content: " \2197"; text-decoration: none; display: inline-block; margin-left: 3px; }
+  .tip-place-addr { font-size: 12px; color: #4a4f57; }
   .day-tip::after {
     content: "";
     position: absolute;
@@ -713,6 +734,7 @@
   :root { --overlap: clamp(110px, 16vh, 170px); }
   #calendar { position: relative; z-index: 1; margin-top: calc(-1 * var(--overlap)); }
   #calendar .section-head { padding-top: clamp(20px, 3vh, 32px); }
+  .cal-month + .cal-month { margin-top: clamp(40px, 7vh, 72px); }
   #calendar .title, #calendar .eyebrow { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6); }
   #calendar .body { padding-bottom: 0; }
   #calendar .card { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); }
@@ -796,55 +818,10 @@
   </section>
 
   <!-- ==================== CALENDAR ==================== -->
-  <section class="section" id="calendar" aria-labelledby="calendar-title">
-    <div class="section-head">
-      <div class="wrap">
-        <p class="eyebrow" id="cal-eyebrow">Calendar</p>
-        <h2 class="title" id="calendar-title">Calendar</h2>
-      </div>
-    </div>
-
-    <div class="body">
-      <div class="wrap cal-layout">
-        <div class="card month">
-          <div class="month-head">
-            <h3 class="month-name sr-only" id="month-name" aria-live="polite">Month</h3>
-            <div class="month-nav">
-              <button class="icon-btn today-btn" type="button" id="cal-today">Today</button>
-              <button class="icon-btn" type="button" id="cal-prev" aria-label="Previous month">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
-              </button>
-              <button class="icon-btn" type="button" id="cal-next" aria-label="Next month">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="day-tip" id="day-tip" role="tooltip" hidden></div>
-          <table class="grid" aria-describedby="month-name">
-            <thead>
-              <tr><th scope="col"><abbr title="Sunday">S</abbr></th><th scope="col"><abbr title="Monday">M</abbr></th><th scope="col"><abbr title="Tuesday">T</abbr></th><th scope="col"><abbr title="Wednesday">W</abbr></th><th scope="col"><abbr title="Thursday">T</abbr></th><th scope="col"><abbr title="Friday">F</abbr></th><th scope="col"><abbr title="Saturday">S</abbr></th></tr>
-            </thead>
-            <tbody id="cal-body"></tbody>
-          </table>
-        </div>
-
-        <div class="card agenda">
-          <div class="agenda-head">
-            <h3 class="h3" id="agenda-title">Upcoming</h3>
-          </div>
-          <ul class="events" id="agenda-list"></ul>
-          <div class="empty" id="agenda-empty" hidden>
-            <p class="empty-title">Nothing on the calendar yet</p>
-            <p>The first nxt gen event is on its way. Follow us on Instagram to hear about it first.</p>
-            <a class="btn btn-solid" href="https://www.instagram.com/nxt_gen_nwa/" target="_blank" rel="noopener">
-              @nxt_gen_nwa
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><path d="M3 11 11 3M4.5 3H11v6.5"/></svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <section class="section" id="calendar" aria-label="Calendar">
+    <!-- this month and next month are drawn here automatically -->
+    <div id="cal-months"></div>
+    <div class="day-tip" id="day-tip" role="tooltip" hidden></div>
   </section>
 
   <!-- ==================== HALLOWEEN PHOTO (between Calendar and Info) ==================== -->
@@ -901,7 +878,9 @@
 const EVENTS = [
   { date: "2026-10-03", time: "7:00 – 9:00 PM", title: "SPECTRE Cars and Karts", place: "K1 Speedway" },
   { date: "2026-10-23", time: "6:00 PM", title: "Vespera Trunk or Treat", place: "K1" },
-  { date: "2026-10-27", time: "6:00 PM", title: "Tuner Tuesday Trunk or Treat", place: "Board Walk" },
+  { date: "2026-10-27", time: "6:00 PM", title: "Tuner Tuesday Trunk or Treat", place: "Boardwalk" },
+  { date: "2026-11-28", time: "5:00 – 7:00 PM", title: "SPECTRE Exotics Night", place: "4100 S Pinnacle Hills Pkwy" },
+  { date: "2026-11-29", time: "10:00 AM", title: "SPECTRE Morning Cruise", place: "Hubbard Clothing Co." },
 ];
 
 /* ==================================================================
@@ -911,8 +890,27 @@ const EVENTS = [
    skip  = dates it does NOT happen, e.g. when a special event replaces it
    ================================================================== */
 const WEEKLY = [
-  { day: "Tuesday", time: "6:00 PM", title: "Tuner Tuesday", from: "2026-10-06", skip: ["2026-10-27"] },
+  { day: "Tuesday", time: "6:00 PM", title: "Tuner Tuesday", from: "2026-10-06", skip: ["2026-10-27"],
+    /* where each week's meet is held (date: place) */
+    where: {
+      "2026-10-06": "Boardwalk",
+      "2026-10-13": "Pinnacle Tire Plaza",
+      "2026-10-20": "Fayetteville",
+      "2026-11-10": "Pinnacle Tire Plaza",
+    } },
 ];
+
+/* ==================================================================
+   PLACES — any event whose place matches a name here gets a
+   clickable link that opens the address in Maps.
+   ================================================================== */
+const PLACES = {
+  "Boardwalk":           "3445 S Old Missouri Rd, Springdale, AR 72764",
+  "Pinnacle Tire Plaza": "3835 W New Hope Rd, Rogers, AR 72758",
+  "Fayetteville":        "2345 Green Acres Rd, Fayetteville, AR 72703",
+  "Hubbard Clothing Co.": "3301 S Market St, Rogers, AR 72758",
+  "4100 S Pinnacle Hills Pkwy": "4100 S Pinnacle Hills Pkwy, Rogers, AR 72758",
+};
 
 (function () {
   "use strict";
@@ -944,7 +942,10 @@ const WEEKLY = [
     const end = new Date(); end.setFullYear(end.getFullYear() + 2);
     for (; d <= end; d.setDate(d.getDate() + 7)) {
       const k = keyOf(d);
-      if (skip.indexOf(k) === -1) all.push(Object.assign({}, w, { date: k }));
+      if (skip.indexOf(k) === -1) {
+        const place = (w.where && w.where[k]) || w.place;
+        all.push(Object.assign({}, w, { date: k, place: place }));
+      }
     }
   });
 
@@ -964,8 +965,6 @@ const WEEKLY = [
   events.forEach(function (e) { (byDay[e._k] = byDay[e._k] || []).push(e); });
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  let viewYear = today.getFullYear();
-  let viewMonth = today.getMonth();
 
   const $ = function (id) { return document.getElementById(id); };
 
@@ -977,6 +976,7 @@ const WEEKLY = [
   let tipPinned = false;
 
   function showTip(cell, pinned) {
+    clearTimeout(hideTimer);
     const k = cell.dataset.key;
     const list = byDay[k] || [];
     const d = parseDate(k);
@@ -997,8 +997,21 @@ const WEEKLY = [
       row.className = "tip-event";
       const t = document.createElement("p"); t.className = "tip-title"; t.textContent = e.title;
       row.appendChild(t);
-      const meta = [e.time, e.place].filter(Boolean).join(" \u00b7 ");
+      const addr = e.place && PLACES[e.place];
+      const meta = addr ? e.time : [e.time, e.place].filter(Boolean).join(" \u00b7 ");
       if (meta) { const m = document.createElement("p"); m.className = "tip-meta"; m.textContent = meta; row.appendChild(m); }
+      if (addr) {
+        const a = document.createElement("a");
+        a.className = "tip-place";
+        a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(addr);
+        a.target = "_blank";
+        a.rel = "noopener";
+        const n = document.createElement("span"); n.className = "tip-place-name"; n.textContent = e.place;
+        const ad = document.createElement("span"); ad.className = "tip-place-addr"; ad.textContent = addr;
+        if (addr.indexOf(e.place) === 0) { n.textContent = addr; a.append(n); }   /* place is already the address */
+        else a.append(n, ad);
+        row.appendChild(a);
+      }
       if (e.notes) { const n = document.createElement("p"); n.className = "tip-meta"; n.textContent = e.notes; row.appendChild(n); }
       tip.appendChild(row);
     });
@@ -1025,7 +1038,13 @@ const WEEKLY = [
     tip.style.setProperty("--arrow-x", Math.round(r.left + r.width / 2 - left) + "px");
   }
 
+  let hideTimer = null;
+  function hideSoon() { clearTimeout(hideTimer); hideTimer = setTimeout(hideTip, 220); }
+  tip.addEventListener("mouseenter", function () { clearTimeout(hideTimer); });
+  tip.addEventListener("mouseleave", function () { if (!tipPinned) hideSoon(); });
+
   function hideTip() {
+    clearTimeout(hideTimer);
     tip.hidden = true;
     if (tipCell) tipCell.removeAttribute("aria-describedby");
     tipCell = null;
@@ -1037,25 +1056,35 @@ const WEEKLY = [
   window.addEventListener("scroll", placeTip, { passive: true });
   window.addEventListener("resize", placeTip);
 
-  function renderMonth() {
-    hideTip();
-    $("month-name").textContent = MONTHS[viewMonth] + " " + viewYear;
-    $("calendar-title").textContent = MONTHS[viewMonth];
-    $("cal-eyebrow").textContent = "Calendar \u00b7 " + viewYear;
-    const first = new Date(viewYear, viewMonth, 1);
-    const start = new Date(viewYear, viewMonth, 1 - first.getDay());
-    const body = $("cal-body");
-    body.textContent = "";
+  const HEAD = '<thead><tr><th scope="col"><abbr title="Sunday">S</abbr></th><th scope="col"><abbr title="Monday">M</abbr></th><th scope="col"><abbr title="Tuesday">T</abbr></th><th scope="col"><abbr title="Wednesday">W</abbr></th><th scope="col"><abbr title="Thursday">T</abbr></th><th scope="col"><abbr title="Friday">F</abbr></th><th scope="col"><abbr title="Saturday">S</abbr></th></tr></thead>';
+
+  function buildMonth(year, month) {
+    const block = document.createElement("div");
+    block.className = "cal-month";
+    const titleId = "cal-title-" + year + "-" + month;
+    block.innerHTML =
+      '<div class="section-head"><div class="wrap">' +
+        '<p class="eyebrow">Calendar \u00b7 ' + year + '</p>' +
+        '<h2 class="title" id="' + titleId + '">' + MONTHS[month] + '</h2>' +
+      '</div></div>' +
+      '<div class="body"><div class="wrap cal-layout"><div class="card month">' +
+        '<table class="grid" aria-labelledby="' + titleId + '">' + HEAD + '<tbody></tbody></table>' +
+      '</div></div></div>';
+    const body = block.querySelector("tbody");
+
+    const first = new Date(year, month, 1);
+    const start = new Date(year, month, 1 - first.getDay());
     for (let w = 0; w < 6; w++) {
       const tr = document.createElement("tr");
       for (let i = 0; i < 7; i++) {
         const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + w * 7 + i);
         const k = keyOf(d);
         const td = document.createElement("td");
-        const has = !!byDay[k];
+        const inMonth = d.getMonth() === month;
+        const has = inMonth && !!byDay[k];
         const cell = document.createElement(has ? "button" : "div");
         cell.className = "day";
-        if (d.getMonth() !== viewMonth) cell.classList.add("out");
+        if (!inMonth) cell.classList.add("out");
         if (d.getTime() === today.getTime()) cell.classList.add("today");
         if (has) {
           cell.type = "button";
@@ -1066,7 +1095,7 @@ const WEEKLY = [
           cell.dataset.key = k;
           if (canHover) {
             cell.addEventListener("mouseenter", function () { showTip(cell, false); });
-            cell.addEventListener("mouseleave", function () { if (!tipPinned) hideTip(); });
+            cell.addEventListener("mouseleave", function () { if (!tipPinned) hideSoon(); });
           }
           cell.addEventListener("focus", function () { showTip(cell, false); });
           cell.addEventListener("blur", function () { if (!tipPinned) hideTip(); });
@@ -1081,54 +1110,21 @@ const WEEKLY = [
         tr.appendChild(td);
       }
       body.appendChild(tr);
-      /* drop a sixth row that belongs entirely to next month */
+      /* drop a sixth row that belongs entirely to the next month */
       if (w === 4) {
         const nextStart = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 35);
-        if (nextStart.getMonth() !== viewMonth) break;
+        if (nextStart.getMonth() !== month) break;
       }
     }
+    return block;
   }
 
-  function eventItem(e) {
-    const li = document.createElement("li");
-    li.className = "event";
-    const date = document.createElement("div");
-    date.className = "event-date";
-    const m = document.createElement("span"); m.className = "m"; m.textContent = SHORT[e._d.getMonth()];
-    const d = document.createElement("span"); d.className = "d"; d.textContent = e._d.getDate();
-    date.append(m, d);
-    const text = document.createElement("div");
-    const h = document.createElement("p"); h.className = "event-title"; h.textContent = e.title;
-    text.appendChild(h);
-    const meta = [e.time, e.place].filter(Boolean).join(" · ");
-    if (meta) { const p = document.createElement("p"); p.className = "event-meta"; p.textContent = meta; text.appendChild(p); }
-    if (e.notes) { const p = document.createElement("p"); p.className = "event-notes"; p.textContent = e.notes; text.appendChild(p); }
-    li.append(date, text);
-    return li;
+  /* this month, then next month right below it */
+  const holder = $("cal-months");
+  for (let m = 0; m < 2; m++) {
+    const d = new Date(today.getFullYear(), today.getMonth() + m, 1);
+    holder.appendChild(buildMonth(d.getFullYear(), d.getMonth()));
   }
-
-  function renderAgenda() {
-    const list = $("agenda-list");
-    list.textContent = "";
-    const shown = events.filter(function (e) { return e._d >= today; }).slice(0, 6);
-    shown.forEach(function (e) { list.appendChild(eventItem(e)); });
-    list.hidden = shown.length === 0;
-    $("agenda-empty").hidden = shown.length !== 0;
-  }
-
-  $("cal-prev").addEventListener("click", function () {
-    viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } renderMonth();
-  });
-  $("cal-next").addEventListener("click", function () {
-    viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } renderMonth();
-  });
-  $("cal-today").addEventListener("click", function () {
-    viewYear = today.getFullYear(); viewMonth = today.getMonth();
-    renderMonth();
-  });
-
-  renderMonth();
-  renderAgenda();
 })();
 </script>
 </body>
