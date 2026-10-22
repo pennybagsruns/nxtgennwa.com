@@ -463,27 +463,39 @@
     box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
   }
   .tip-place {
-    display: flex;
-    flex-direction: column;
     margin-top: 6px;
-    padding: 7px 9px;
+    padding: 8px 9px 9px;
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 4px;
+  }
+  .tip-place-name { margin: 0; font-size: 13px; font-weight: 700; line-height: 1.3; }
+  .tip-place-addr { margin: 1px 0 0; font-size: 12px; line-height: 1.35; color: #4a4f57; }
+  .tip-ask {
+    margin: 8px 0 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6b717b;
+  }
+  .tip-maps { display: flex; gap: 6px; }
+  .tip-map-btn {
+    flex: 1 1 0;
+    padding: 7px 8px;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 700;
     color: var(--ink);
+    background: #fff;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
   }
-  .tip-place:hover { border-color: rgba(0, 0, 0, 0.35); }
-  .tip-place:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .tip-place-name {
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-  .tip-place-name::after { content: " \2197"; text-decoration: none; display: inline-block; margin-left: 3px; }
-  .tip-place-addr { font-size: 12px; color: #4a4f57; }
+  .tip-map-btn:hover { color: #fff; background: var(--ink); box-shadow: none; }
+  .tip-map-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .day-tip::after {
     content: "";
     position: absolute;
@@ -734,7 +746,8 @@
   :root { --overlap: clamp(110px, 16vh, 170px); }
   #calendar { position: relative; z-index: 1; margin-top: calc(-1 * var(--overlap)); }
   #calendar .section-head { padding-top: clamp(20px, 3vh, 32px); }
-  .cal-month + .cal-month { margin-top: clamp(40px, 7vh, 72px); }
+  .cal-month + .cal-month { margin-top: clamp(16px, 3vh, 28px); }
+  #calendar .cal-month + .cal-month .section-head { padding-top: 0; }
   #calendar .title, #calendar .eyebrow { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6); }
   #calendar .body { padding-bottom: 0; }
   #calendar .card { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); }
@@ -833,7 +846,6 @@
   <section class="section section-info" id="info" aria-labelledby="info-title">
     <div class="section-head">
       <div class="wrap">
-        <p class="eyebrow">Good to know</p>
         <h2 class="title" id="info-title">Info</h2>
       </div>
     </div>
@@ -890,7 +902,7 @@ const EVENTS = [
    skip  = dates it does NOT happen, e.g. when a special event replaces it
    ================================================================== */
 const WEEKLY = [
-  { day: "Tuesday", time: "6:00 PM", title: "Tuner Tuesday", from: "2026-10-06", skip: ["2026-10-27"],
+  { day: "Tuesday", time: "6:00 PM", title: "Tuner Tuesday", from: "2026-10-06", skip: ["2026-10-27", "2026-11-03", "2026-11-17", "2026-11-24"],
     /* where each week's meet is held (date: place) */
     where: {
       "2026-10-06": "Boardwalk",
@@ -1001,16 +1013,27 @@ const PLACES = {
       const meta = addr ? e.time : [e.time, e.place].filter(Boolean).join(" \u00b7 ");
       if (meta) { const m = document.createElement("p"); m.className = "tip-meta"; m.textContent = meta; row.appendChild(m); }
       if (addr) {
-        const a = document.createElement("a");
-        a.className = "tip-place";
-        a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(addr);
-        a.target = "_blank";
-        a.rel = "noopener";
-        const n = document.createElement("span"); n.className = "tip-place-name"; n.textContent = e.place;
-        const ad = document.createElement("span"); ad.className = "tip-place-addr"; ad.textContent = addr;
-        if (addr.indexOf(e.place) === 0) { n.textContent = addr; a.append(n); }   /* place is already the address */
-        else a.append(n, ad);
-        row.appendChild(a);
+        const box = document.createElement("div");
+        box.className = "tip-place";
+        const n = document.createElement("p"); n.className = "tip-place-name";
+        const same = addr.indexOf(e.place) === 0;               /* place is already the address */
+        n.textContent = same ? addr : e.place;
+        box.appendChild(n);
+        if (!same) { const ad = document.createElement("p"); ad.className = "tip-place-addr"; ad.textContent = addr; box.appendChild(ad); }
+        const ask = document.createElement("p"); ask.className = "tip-ask"; ask.textContent = "Open in";
+        const btns = document.createElement("div"); btns.className = "tip-maps";
+        [["Google Maps", "https://www.google.com/maps/search/?api=1&query="],
+         ["Apple Maps",  "https://maps.apple.com/?q="]].forEach(function (m) {
+          const a = document.createElement("a");
+          a.className = "tip-map-btn";
+          a.href = m[1] + encodeURIComponent(addr);
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = m[0];
+          btns.appendChild(a);
+        });
+        box.append(ask, btns);
+        row.appendChild(box);
       }
       if (e.notes) { const n = document.createElement("p"); n.className = "tip-meta"; n.textContent = e.notes; row.appendChild(n); }
       tip.appendChild(row);
@@ -1058,13 +1081,13 @@ const PLACES = {
 
   const HEAD = '<thead><tr><th scope="col"><abbr title="Sunday">S</abbr></th><th scope="col"><abbr title="Monday">M</abbr></th><th scope="col"><abbr title="Tuesday">T</abbr></th><th scope="col"><abbr title="Wednesday">W</abbr></th><th scope="col"><abbr title="Thursday">T</abbr></th><th scope="col"><abbr title="Friday">F</abbr></th><th scope="col"><abbr title="Saturday">S</abbr></th></tr></thead>';
 
-  function buildMonth(year, month) {
+  function buildMonth(year, month, isFirst) {
     const block = document.createElement("div");
     block.className = "cal-month";
     const titleId = "cal-title-" + year + "-" + month;
     block.innerHTML =
       '<div class="section-head"><div class="wrap">' +
-        '<p class="eyebrow">Calendar \u00b7 ' + year + '</p>' +
+        (isFirst ? '<p class="eyebrow">Calendar \u00b7 ' + year + '</p>' : '') +
         '<h2 class="title" id="' + titleId + '">' + MONTHS[month] + '</h2>' +
       '</div></div>' +
       '<div class="body"><div class="wrap cal-layout"><div class="card month">' +
@@ -1123,7 +1146,7 @@ const PLACES = {
   const holder = $("cal-months");
   for (let m = 0; m < 2; m++) {
     const d = new Date(today.getFullYear(), today.getMonth() + m, 1);
-    holder.appendChild(buildMonth(d.getFullYear(), d.getMonth()));
+    holder.appendChild(buildMonth(d.getFullYear(), d.getMonth(), m === 0));
   }
 })();
 </script>
