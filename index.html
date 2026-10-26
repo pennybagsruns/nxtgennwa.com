@@ -751,6 +751,32 @@
   #calendar .title, #calendar .eyebrow { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6); }
   #calendar .body { padding-bottom: 0; }
   #calendar .card { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); }
+  /* computer screens: this month and next month side by side
+     (phones keep them stacked one above the other) */
+  @media (min-width: 900px) {
+    #cal-months {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: auto auto;
+      column-gap: clamp(20px, 3vw, 40px);
+      max-width: calc(1080px + 2 * var(--gutter));
+      margin: 0 auto;
+      padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+      padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+    }
+    /* each month shares the same two rows, so both titles and both cards line up */
+    #cal-months .cal-month {
+      display: grid;
+      grid-row: span 2;
+      grid-template-rows: subgrid;
+      margin-top: 0;
+    }
+    #cal-months .section-head,
+    #cal-months .body { padding-left: 0; padding-right: 0; }
+    #cal-months .section-head { display: flex; flex-direction: column; justify-content: flex-end; }
+    #calendar .cal-month + .cal-month .section-head { padding-top: clamp(20px, 3vh, 32px); }
+    #cal-months .cal-layout { grid-template-columns: minmax(0, 1fr); }
+  }
   .photo-band {
     position: relative;
     z-index: 0;
@@ -890,9 +916,11 @@
 const EVENTS = [
   { date: "2026-10-03", time: "7:00 – 9:00 PM", title: "SPECTRE Cars and Karts", place: "K1 Speedway" },
   { date: "2026-10-23", time: "6:00 PM", title: "Vespera Trunk or Treat", place: "K1" },
+  { date: "2026-10-25", time: "9:00 AM – 5:00 PM", title: "Drift NWA Final", place: "Drake Field" },
   { date: "2026-10-27", time: "6:00 PM", title: "Tuner Tuesday Trunk or Treat", place: "Boardwalk" },
   { date: "2026-11-01", title: "Black Top", place: "4204 S Pinnacle Hills Pkwy" },
   { date: "2026-11-28", time: "5:00 – 7:00 PM", title: "SPECTRE Exotics Night", place: "4100 S Pinnacle Hills Pkwy" },
+  { date: "2026-11-29", time: "8:00 – 11:00 AM", title: "Cruising the Ozarks - Cars & Coffee", place: "Pig Trails Harley-Davidson" },
   { date: "2026-11-29", time: "10:00 AM", title: "SPECTRE Morning Cruise", place: "Hubbard Clothing Co." },
 ];
 
@@ -924,6 +952,8 @@ const PLACES = {
   "Hubbard Clothing Co.": "3301 S Market St, Rogers, AR 72758",
   "4100 S Pinnacle Hills Pkwy": "4100 S Pinnacle Hills Pkwy, Rogers, AR 72758",
   "4204 S Pinnacle Hills Pkwy": "4204 S Pinnacle Hills Pkwy, Rogers, AR 72758",
+  "Drake Field":         "311 W Ernest Lancaster Dr, Fayetteville, AR",
+  "Pig Trails Harley-Davidson": "2409 W Hudson Rd, Rogers, AR 72756",
 };
 
 (function () {
