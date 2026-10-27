@@ -789,6 +789,154 @@
     #calendar .cal-month + .cal-month .section-head { padding-top: clamp(20px, 3vh, 32px); }
     #cal-months .cal-layout { grid-template-columns: minmax(0, 1fr); }
   }
+
+  /* ---------- Next event (sits above the first calendar month) ---------- */
+  .next {
+    padding: clamp(20px, 3vh, 32px) max(var(--gutter), env(safe-area-inset-right, 0px)) clamp(8px, 2vh, 16px) max(var(--gutter), env(safe-area-inset-left, 0px));
+  }
+  .next .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--haze); }
+  .live-dot {
+    position: relative;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--cloud);
+  }
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--cloud);
+    animation: live-pulse 1.8s ease-out infinite;
+  }
+  @keyframes live-pulse {
+    from { transform: scale(1); opacity: 0.7; }
+    to   { transform: scale(3); opacity: 0; }
+  }
+  .next-card {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr) minmax(250px, 300px);
+    gap: clamp(18px, 3vw, 32px);
+    align-items: center;
+    padding: clamp(18px, 2.6vw, 26px);
+    background:
+      radial-gradient(ellipse 60% 120% at 0% 0%, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 70%),
+      var(--panel);
+  }
+  .next-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: start;
+    height: 100px;
+    background: var(--cloud);
+    color: var(--ink);
+    border-radius: 4px;
+    line-height: 1;
+  }
+  .next-date .m { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+  .next-date .d {
+    margin: 5px 0 6px;
+    font-family: var(--display);
+    font-stretch: var(--wide);
+    font-variation-settings: "wdth" 112;
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .next-date .w { font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #5b616b; }
+  .next-when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .next-status {
+    padding: 4px 8px;
+    color: var(--ink);
+    background: var(--cloud);
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .next-title {
+    margin: 0;
+    font-family: var(--display);
+    font-stretch: var(--wide);
+    font-variation-settings: "wdth" 112;
+    font-weight: 800;
+    font-size: clamp(1.375rem, 3vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .next-place { margin: 10px 0 0; font-size: 15px; color: var(--haze); }
+  .next-place strong { color: var(--cloud); font-weight: 700; }
+  .next-place span { display: block; font-size: 14px; color: var(--muted); }
+  .next-count {
+    margin: 12px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--cloud);
+  }
+  .next-also { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+  .next-actions { display: grid; gap: 14px; }
+  .next-label {
+    margin: 0 0 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .next-btns { display: flex; gap: 6px; }
+  .next-btn {
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 10px;
+    white-space: nowrap;
+    font-family: var(--display);
+    font-stretch: var(--wide);
+    font-variation-settings: "wdth" 112;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--cloud);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+  .next-btn svg { width: 13px; height: 13px; flex: none; }
+  .next-btn:hover { background: var(--panel-2); border-color: rgba(255, 255, 255, 0.45); }
+  .next-btn.solid { background: var(--cloud); color: var(--ink); border-color: var(--cloud); }
+  .next-btn.solid:hover { background: var(--haze); border-color: var(--haze); }
+  .next-btn:focus-visible { outline: 2px solid var(--cloud); outline-offset: 3px; }
+  @media (min-width: 900px) {
+    .next { max-width: calc(1080px + 2 * var(--gutter)); margin: 0 auto; }
+  }
+  /* tablets and phones: date + details side by side, buttons underneath */
+  @media (max-width: 899px) {
+    .next-card { grid-template-columns: 72px minmax(0, 1fr); }
+    .next-date { height: 84px; }
+    .next-date .d { font-size: 30px; }
+    .next-actions { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 16px; border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 560px) {
+    .next-actions { grid-template-columns: minmax(0, 1fr); }
+  }
   .photo-band {
     position: relative;
     z-index: 0;
@@ -798,6 +946,81 @@
     overflow: hidden;
   }
   .section-info { position: relative; z-index: 1; }
+
+  /* ---------- Mailing list (between Featured car and Info) ---------- */
+  .section-join {
+    position: relative;
+    z-index: 1;
+    padding: clamp(24px, 5vh, 48px) max(var(--gutter), env(safe-area-inset-right, 0px)) clamp(8px, 2vh, 16px) max(var(--gutter), env(safe-area-inset-left, 0px));
+  }
+  .join-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+    gap: clamp(20px, 4vw, 48px);
+    align-items: center;
+    padding: clamp(22px, 3.2vw, 36px);
+    background:
+      radial-gradient(ellipse 55% 140% at 100% 0%, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 70%),
+      var(--panel);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  }
+  .join-title {
+    margin: 0;
+    font-family: var(--display);
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+    font-weight: 800;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .join-copy { margin: 12px 0 0; max-width: 42ch; color: var(--haze); }
+  .join-side { min-width: 0; }
+  .join-open { width: 100%; justify-content: center; }
+  .join-form { display: grid; gap: 10px; }
+  .join-form.is-open { animation: rise-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .join-row { display: flex; gap: 8px; }
+  .join-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 50px;
+    padding: 0 14px;
+    font: inherit;
+    font-size: 16px;                 /* 16px stops phones from zooming in */
+    color: var(--cloud);
+    background: var(--ground);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    transition: border-color 0.18s ease;
+  }
+  .join-input::placeholder { color: var(--muted); }
+  .join-input:hover { border-color: rgba(255, 255, 255, 0.4); }
+  .join-input:focus { outline: none; border-color: var(--cloud); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12); }
+  .join-form .btn { flex: none; height: 50px; }
+  .join-form .btn[disabled] { opacity: 0.6; cursor: progress; }
+  .join-fine { margin: 0; font-size: 12px; color: var(--muted); }
+  .join-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .join-msg { margin: 0; font-size: 14px; }
+  .join-msg.is-error { color: #ffb4a8; }
+  .join-done { display: flex; gap: 14px; align-items: flex-start; animation: rise-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .join-done svg { flex: none; width: 40px; height: 40px; padding: 10px; color: var(--ink); background: var(--cloud); border-radius: 50%; }
+  .join-done-title {
+    margin: 0;
+    font-family: var(--display);
+    font-stretch: var(--wide);
+    font-variation-settings: "wdth" 112;
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+  .join-done p:last-child { margin: 4px 0 0; color: var(--haze); font-size: 15px; }
+  @media (max-width: 760px) {
+    .join-card { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 420px) {
+    .join-row { flex-direction: column; }
+    .join-form .btn { justify-content: center; }
+  }
 
   /* ---------- Featured car ---------- */
   .section-feature { position: relative; z-index: 1; }
@@ -1085,6 +1308,33 @@
 
   <!-- ==================== CALENDAR ==================== -->
   <section class="section" id="calendar" aria-label="Calendar">
+    <!-- the next upcoming event is filled in automatically from the lists at the bottom -->
+    <div class="next" id="next-event" hidden>
+      <div class="wrap">
+        <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span>Next event</p>
+        <article class="card next-card" aria-labelledby="next-title">
+          <div class="next-date" id="next-date" aria-hidden="true"></div>
+          <div class="next-main">
+            <p class="next-when" id="next-when"></p>
+            <h2 class="next-title" id="next-title"></h2>
+            <p class="next-place" id="next-place"></p>
+            <p class="next-count" id="next-count" aria-live="polite"></p>
+            <p class="next-also" id="next-also" hidden></p>
+          </div>
+          <div class="next-actions">
+            <div id="next-dir">
+              <p class="next-label">Directions</p>
+              <div class="next-btns" id="next-dir-btns"></div>
+            </div>
+            <div>
+              <p class="next-label">Add to calendar</p>
+              <div class="next-btns" id="next-cal-btns"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
     <!-- this month and next month are drawn here automatically -->
     <div id="cal-months"></div>
 
@@ -1123,6 +1373,35 @@
             <button class="feature-zoom" type="button" aria-label="View larger: the M3 from the front"><svg class="zoom-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5M7 5v4M5 7h4"/></svg>
             <img src="featured-m3-front.jpg" alt="Silver BMW M3 Competition from the front, headlights on, parked outside a glass building." width="1151" height="1612" loading="lazy" decoding="async"></button>
           </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MAILING LIST ==================== -->
+  <section class="section-join" id="join" aria-labelledby="join-title">
+    <div class="wrap">
+      <div class="card join-card">
+        <h2 class="join-title" id="join-title">Never miss a meet</h2>
+        <div class="join-side" id="join-side">
+          <button class="btn btn-solid join-open" id="join-open" type="button" aria-controls="join-form" aria-expanded="false">
+            Join the list
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1"/><path d="m2 4 6 5 6-5"/></svg>
+          </button>
+          <!-- the form sends to MailerLite (address set in MAILING_LIST at the bottom of the page) -->
+          <form class="join-form" id="join-form" method="post" target="_blank" novalidate hidden>
+            <div class="join-row">
+              <label class="sr-only" for="join-email">Email address</label>
+              <input class="join-input" id="join-email" name="fields[email]" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required>
+              <button class="btn btn-solid" id="join-submit" type="submit">Subscribe</button>
+            </div>
+            <!-- bots fill in hidden boxes; people never see this one -->
+            <div class="join-hp" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+            <input type="hidden" name="ml-submit" value="1">
+            <input type="hidden" name="anticsrf" value="true">
+            <p class="join-msg" id="join-msg" role="status" aria-live="polite"></p>
+            <p class="join-fine">We'll send a quick email to confirm it's you.</p>
+          </form>
         </div>
       </div>
     </div>
@@ -1230,6 +1509,14 @@ const PLACES = {
   "Drake Field":         "311 W Ernest Lancaster Dr, Fayetteville, AR",
   "Pig Trails Harley-Davidson": "2409 W Hudson Rd, Rogers, AR 72756",
 };
+
+/* ==================================================================
+   MAILING LIST — where the signup form sends emails (MailerLite).
+   In MailerLite: Forms > your embedded form > Embed > HTML code.
+   Find  action="https://assets.mailerlite.com/jsonp/.../subscribe"
+   and paste that address between the quotes below.
+   ================================================================== */
+const MAILING_LIST = "https://assets.mailerlite.com/jsonp/2747767/forms/202507968022841282/subscribe";
 
 (function () {
   "use strict";
@@ -1545,6 +1832,129 @@ const PLACES = {
     return block;
   }
 
+  /* ---------- Next event: the first event that hasn't finished yet ----------
+     Picks itself from EVENTS and WEEKLY, so it never needs editing by hand.
+     It stays up until the event ends (or the end of the day if it has no time),
+     then moves on to the next one. */
+  const FULLDAY = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  function eventWindow(e) {
+    const span = eventSpan(e);
+    if (!span) {
+      const end = parseDate(e._k); end.setDate(end.getDate() + 1);
+      return { start: parseDate(e._k), end: end, span: null };
+    }
+    const p = e._k.split("-").map(Number);
+    return { start: centralToDate(p[0], p[1] - 1, p[2], span[0]), end: centralToDate(p[0], p[1] - 1, p[2], span[1]), span: span };
+  }
+  function findNext(now) {
+    for (let i = 0; i < events.length; i++) {
+      const w = eventWindow(events[i]);
+      if (w.end > now) return { e: events[i], w: w };
+    }
+    return null;
+  }
+  function untilText(ms) {
+    const m = Math.max(1, Math.ceil(ms / 60000));
+    const d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60), mm = m % 60;
+    if (d >= 2) return d + " days";
+    if (d === 1) return "1 day " + h + "h";
+    if (h) return h + "h " + mm + "m";
+    return mm + " min";
+  }
+  function nextBtn(label, href, solid, download) {
+    const a = document.createElement("a");
+    a.className = "next-btn" + (solid ? " solid" : "");
+    a.href = href;
+    if (download) a.download = download;
+    else { a.target = "_blank"; a.rel = "noopener"; }
+    a.textContent = label;
+    return a;
+  }
+
+  const nextBox = $("next-event");
+  let nextKey = null;
+  function renderNext() {
+    const now = new Date();
+    const found = findNext(now);
+    if (!found) { nextBox.hidden = true; nextKey = null; return; }
+    const e = found.e, w = found.w;
+    const d = parseDate(e._k);
+    const key = e._k + "|" + e.title;
+
+    /* the parts that only change when the next event changes */
+    if (key !== nextKey) {
+      nextKey = key;
+      $("next-date").innerHTML = "";
+      [["m", SHORT[d.getMonth()]], ["d", d.getDate()], ["w", DOW[d.getDay()]]].forEach(function (p) {
+        const s = document.createElement("span"); s.className = p[0]; s.textContent = p[1];
+        $("next-date").appendChild(s);
+      });
+      $("next-title").textContent = e.title;
+
+      const place = $("next-place");
+      place.textContent = "";
+      const addr = e.place && PLACES[e.place];
+      if (e.place) {
+        const same = addr && addr.indexOf(e.place) === 0;   /* place is already the address */
+        const name = document.createElement("strong");
+        name.textContent = same ? addr : e.place;
+        place.appendChild(name);
+        if (addr && !same) { const s = document.createElement("span"); s.textContent = addr; place.appendChild(s); }
+      }
+      place.hidden = !e.place;
+
+      /* other events on the same day get a one-line mention */
+      const others = (byDay[e._k] || []).filter(function (o) { return o !== e && eventWindow(o).end > now; });
+      const also = $("next-also");
+      also.hidden = !others.length;
+      also.textContent = others.length ? "Also that day: " + others.map(function (o) {
+        return o.title + (o.time ? " · " + o.time : "");
+      }).join(", ") : "";
+
+      const dir = $("next-dir-btns");
+      dir.textContent = "";
+      if (e.place) {
+        const dest = encodeURIComponent(addr || e.place + ", Northwest Arkansas");
+        dir.append(
+          nextBtn("Google Maps", "https://www.google.com/maps/dir/?api=1&destination=" + dest, true),
+          nextBtn("Apple Maps", "https://maps.apple.com/?daddr=" + dest, false)
+        );
+      }
+      $("next-dir").hidden = !e.place;
+
+      const links = calLinks(e);
+      const cal = $("next-cal-btns");
+      cal.textContent = "";
+      cal.append(nextBtn("Google", links.google, false), nextBtn("Apple / Outlook", links.ics, false, links.file));
+    }
+
+    /* the parts that change as time passes */
+    const live = now >= w.start;
+    const todayNow = new Date(now); todayNow.setHours(0, 0, 0, 0);
+    const days = Math.round((d - todayNow) / 86400000);
+    let status;
+    if (live && w.span) status = "Happening now";
+    else if (days <= 0) status = (w.span && w.span[0] >= 17 * 60) ? "Tonight" : "Today";
+    else if (days === 1) status = "Tomorrow";
+    else if (days < 7) status = "This " + FULLDAY[d.getDay()];
+    else status = "In " + days + " days";
+
+    const when = $("next-when");
+    when.textContent = "";
+    const pill = document.createElement("span"); pill.className = "next-status"; pill.textContent = status;
+    const t = document.createElement("span"); t.textContent = e.time || "Time TBA";
+    when.append(pill, t);
+
+    const count = $("next-count");
+    if (!w.span) count.textContent = days > 0 ? "Starts in " + days + (days === 1 ? " day" : " days") : "";
+    else count.textContent = live ? "Wraps up in " + untilText(w.end - now) : "Starts in " + untilText(w.start - now);
+    count.hidden = !count.textContent;
+
+    nextBox.hidden = false;
+  }
+  renderNext();
+  setInterval(renderNext, 30000);
+
   /* this month, then next month right below it */
   const holder = $("cal-months");
   for (let m = 0; m < 2; m++) {
@@ -1610,16 +2020,84 @@ const PLACES = {
     if (Math.abs(dx) > 50) lbSwitch(dx < 0 ? 1 : -1);
   });
 
+  /* ---------- mailing list signup ---------- */
+  const joinOpen = $("join-open"), joinForm = $("join-form"), joinEmail = $("join-email");
+  const joinSubmit = $("join-submit"), joinMsg = $("join-msg"), joinSide = $("join-side");
+  const listUrl = String(MAILING_LIST || "").trim();
+  if (listUrl) joinForm.action = listUrl;
+
+  joinOpen.addEventListener("click", function () {
+    joinOpen.hidden = true;
+    joinOpen.setAttribute("aria-expanded", "true");
+    joinForm.hidden = false;
+    joinForm.classList.add("is-open");
+    joinEmail.focus();
+  });
+
+  function joinSay(text, isError) {
+    joinMsg.textContent = text;
+    joinMsg.classList.toggle("is-error", !!isError);
+  }
+  function joinDone(title, text) {
+    joinSide.innerHTML =
+      '<div class="join-done" role="status"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.5 3.2 3L13 4.5"/></svg>' +
+      '<div><p class="join-done-title"></p><p></p></div></div>';
+    const ps = joinSide.querySelectorAll(".join-done p");
+    ps[0].textContent = title;
+    ps[1].textContent = text;
+  }
+
+  joinForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    const email = joinEmail.value.trim();
+    if (!email || !joinEmail.checkValidity()) {
+      joinSay("Please enter a valid email address.", true);
+      joinEmail.focus();
+      return;
+    }
+    if (joinForm.elements.website.value) return;              /* a bot filled the hidden box */
+    if (!listUrl) {
+      joinSay("Signups aren't connected yet. Follow us on Instagram for now.", true);
+      return;
+    }
+    joinSubmit.disabled = true;
+    joinSubmit.textContent = "Joining…";
+    joinSay("");
+    const data = new FormData();
+    data.append("fields[email]", email);
+    data.append("ml-submit", "1");
+    data.append("anticsrf", "true");
+    fetch(listUrl, { method: "POST", body: data })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res && res.success) {
+          joinDone("Almost there", "Check your inbox and tap the confirm link to finish joining.");
+        } else {
+          const why = res && res.errors && res.errors.fields && res.errors.fields.email;
+          joinSubmit.disabled = false;
+          joinSubmit.textContent = "Subscribe";
+          joinSay((why && why[0]) || "That didn't go through. Please check your email and try again.", true);
+        }
+      })
+      .catch(function () {
+        /* if the browser blocks the quiet send, finish the signup on MailerLite's page instead */
+        HTMLFormElement.prototype.submit.call(joinForm);
+        joinDone("Almost there", "Finish up in the tab that just opened, then check your inbox to confirm.");
+      });
+  });
+
   /* ---------- fade things in as they scroll into view ---------- */
   /* [element, delay in seconds] — the delay lets neighbours arrive one after another */
   const revealList = [];
   function addReveal(el, d) { if (el) revealList.push([el, d || 0]); }
+  addReveal(document.querySelector(".next .wrap"), 0);
   document.querySelectorAll(".cal-month").forEach(function (m, i) {
     addReveal(m.querySelector(".section-head"), i * 0.12);
     addReveal(m.querySelector(".card"), i * 0.12 + 0.1);
   });
   addReveal(document.querySelector(".feature-head"), 0);
   document.querySelectorAll(".feature-photo").forEach(function (f, i) { addReveal(f, 0.1 + i * 0.1); });
+  addReveal(document.querySelector(".join-card"), 0);
   addReveal(document.querySelector(".section-info .section-head"), 0);
   addReveal(document.querySelector(".section-info .card"), 0.1);
   addReveal(document.querySelector(".foot"), 0);
