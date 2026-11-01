@@ -496,6 +496,24 @@
   .day.has-event.past { background: rgba(255, 255, 255, 0.04); color: var(--muted); font-weight: 600; }
   .day.has-event.past::after { background: var(--muted); }
   .day.has-event.past:hover { background: rgba(255, 255, 255, 0.09); color: var(--haze); }
+  /* days that are over get a thin slash, like crossing them off a wall calendar */
+  .day.gone { color: rgba(255, 255, 255, 0.42); }
+  .day.gone::before {
+    content: "";
+    position: absolute;
+    inset: 16% 22%;
+    background: linear-gradient(to bottom right,
+      transparent calc(50% - 0.75px),
+      rgba(255, 255, 255, 0.28) calc(50% - 0.75px),
+      rgba(255, 255, 255, 0.28) calc(50% + 0.75px),
+      transparent calc(50% + 0.75px));
+    pointer-events: none;
+  }
+  .day.has-event.past.gone::before { background: linear-gradient(to bottom right,
+      transparent calc(50% - 0.75px),
+      rgba(255, 255, 255, 0.36) calc(50% - 0.75px),
+      rgba(255, 255, 255, 0.36) calc(50% + 0.75px),
+      transparent calc(50% + 0.75px)); }
   .day.has-event[aria-describedby] { outline: 1px solid rgba(255, 255, 255, 0.55); outline-offset: -1px; }
 
   /* the pop-up that lists a day's events */
@@ -1528,16 +1546,20 @@ const EVENTS = [
   { date: "2026-11-28", time: "5:00 – 7:00 PM", title: "SPECTRE Exotics Night", place: "4100 S Pinnacle Hills Pkwy" },
   { date: "2026-11-29", time: "8:00 – 11:00 AM", title: "Cruising the Ozarks - Cars & Coffee", place: "Pig Trails Harley-Davidson" },
   { date: "2026-11-29", time: "10:00 AM", title: "SPECTRE Morning Cruise", place: "Hubbard Clothing Co." },
+  { date: "2026-12-01", time: "6:00 PM", title: "Tuner Tuesday", place: "TBD", notes: "Check back soon" },
 ];
 
 /* ==================================================================
    WEEKLY EVENTS — repeat every week on the same day.
    day   = Sunday, Monday, Tuesday, Wednesday, Thursday, Friday or Saturday
    from  = first date it happens (year-month-day)
+   until = last date it can happen (year-month-day). Nothing repeats past
+           this, so new months start empty until you add events by hand.
+           Leave it out and the event only shows on its "from" date.
    skip  = dates it does NOT happen, e.g. when a special event replaces it
    ================================================================== */
 const WEEKLY = [
-  { day: "Tuesday", time: "6:00 PM", title: "Tuner Tuesday", from: "2026-10-06", skip: ["2026-10-27", "2026-11-03", "2026-11-17", "2026-11-24"],
+  { day: "Tuesday", time: "6:00 PM", title: "Tuner Tuesday", from: "2026-10-06", until: "2026-11-10", skip: ["2026-10-27", "2026-11-03", "2026-11-17", "2026-11-24"],
     /* where each week's meet is held (date: place) */
     where: {
       "2026-10-06": "Boardwalk",
@@ -1598,7 +1620,8 @@ const MAILING_LIST = "https://assets.mailerlite.com/jsonp/2747767/forms/20250796
     const d = w.from ? parseDate(w.from) : new Date();
     d.setHours(0, 0, 0, 0);
     while (d.getDay() !== dow) d.setDate(d.getDate() + 1);
-    const end = new Date(); end.setFullYear(end.getFullYear() + 2);
+    /* stops at "until" — never runs on into future months by itself */
+    const end = w.until ? parseDate(w.until) : new Date(d);
     for (; d <= end; d.setDate(d.getDate() + 7)) {
       const k = keyOf(d);
       if (skip.indexOf(k) === -1) {
@@ -1852,6 +1875,7 @@ const MAILING_LIST = "https://assets.mailerlite.com/jsonp/2747767/forms/20250796
         cell.className = "day";
         if (!inMonth) cell.classList.add("out");
         if (d.getTime() === today.getTime()) cell.classList.add("today");
+        if (inMonth && d < today) cell.classList.add("gone");     /* crossed off */
         if (has) {
           cell.type = "button";
           cell.classList.add("has-event");
@@ -1970,14 +1994,14 @@ const MAILING_LIST = "https://assets.mailerlite.com/jsonp/2747767/forms/20250796
 
       const dir = $("next-dir-btns");
       dir.textContent = "";
-      if (e.place) {
+      if (e.place && !/^tbd$/i.test(e.place)) {
         const dest = encodeURIComponent(addr || e.place + ", Northwest Arkansas");
         dir.append(
           nextBtn("Google Maps", "https://www.google.com/maps/dir/?api=1&destination=" + dest, true),
           nextBtn("Apple Maps", "https://maps.apple.com/?daddr=" + dest, false)
         );
       }
-      $("next-dir").hidden = !e.place;
+      $("next-dir").hidden = !e.place || /^tbd$/i.test(e.place);
 
       const links = calLinks(e);
       const cal = $("next-cal-btns");
